@@ -14,6 +14,8 @@ This is a sample API for in-home thermostats. Everything is stored in memory, an
 - Thermostat ID: `thermo1`
 - Thermostat ID: `thermo2`
 
+NOTE: When sending `PUT` requests, new values should be send as raw values (i.e. not JSON) in the body
+
 ## `/thermostat/:id`
 
 - Supports: `GET`
