@@ -1,6 +1,6 @@
 import web
 import pydash as _
-import re
+import random
 
 ##############
 ## Helpers ###
@@ -84,15 +84,21 @@ def update(id, updates):
 def getThermo(id):
     return sendIfFound(get(id))
 
-def getName(id):
+def getProperty(id, prop):
     thermo = get(id)
     if thermo is None:
         return itemNotFound()
-    name = thermo.get('name', None)
-    return sendIfFound(name)
+    value = thermo.get(prop, None)
+    return sendIfFound(value)
+
+def getName(id):
+    return getProperty(id, 'name')
 
 def setName(id, newName):
     return update(id, {'name': newName})
+
+def getTemp(id):
+    return getProperty(id, 'current_temp')
 
 ##############
 ## Routing ###
@@ -119,6 +125,10 @@ class name:
     def PUT(self, id):
         newName = web.data()
         return setName(id, newName)
+
+class temp:
+    def GET(self, id):
+        return getTemp(id)
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
