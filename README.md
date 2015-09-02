@@ -18,34 +18,34 @@ This is a sample API for in-home thermostats. Everything is stored in memory, an
 
 - Supports: `GET`
 
-## `thermostat/:id/name`
+## `/thermostat/:id/name`
 
 - Supports: `GET`, `PUT`
 - Data type: `string`
 
-## `thermostat/:id/temp`
+## `/thermostat/:id/temp`
 
 - Support: `GET`
 - Data type: `number`
 
 NOTE: Since this is a sample app, it returns the same value every time.
 
-## `thermostat/:id/operating-mode`
+## `/thermostat/:id/operating-mode`
 
 - Supports: `GET`, `PUT`
 - Data type: `string` (must be one of `cool`, `heat`, or `off`)
 
-## `thermostat/:id/cool-setpoint`
+## `/thermostat/:id/cool-setpoint`
 
 - Supports: `GET`, `PUT`
 - Data type: `number` (must be in range of 30-100, stored in Fahrenheit)
 
-## `thermostat/:id/heat-setpoint`
+## `/thermostat/:id/heat-setpoint`
 
 - Supports: `GET`, `PUT`
 - Data type: `number` (must be in range of 30-100, stored in Fahrenheit)
 
-## `thermostat/:id/fan-mode`
+## `/thermostat/:id/fan-mode`
 
 - Supports: `GET`, `PUT`
 - Data type: `string` (must be one of `off` or `auto`)
