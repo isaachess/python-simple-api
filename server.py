@@ -1,9 +1,50 @@
 import web
 import pydash as _
+import re
+
+##############
+## Helpers ###
+##############
+
+def valueInEnum(value, allowedValues):
+    return _.contains(allowedValues, value)
+
+def valueInRange(value, allowedRange):
+    return value >= allowedRange['min'] and value <= allowedRange['max']
+
+#######################
+### Response helpers ##
+#######################
+
+def genericFailure(message='Failure', statusCode=404):
+    return {
+        'message': message,
+        'statusCode': statusCode
+    }
+
+def genericSuccess(payload, message='Success'):
+    return {
+        'payload': payload,
+        'message': message
+    }
+
+def itemNotFound():
+    return genericFailure('The requested item is not available.')
+
+def sendIfFound(item, successMessage='Success'):
+    if item is None:
+        return itemNotFound()
+    else:
+        return genericSuccess(item, successMessage)
 
 ###########
 ## CRUD ###
 ###########
+
+operatingModes = ['cool', 'heat', 'off']
+fanModes = ['off', 'auto']
+coolSetpointRange = {'min': 30, 'max': 100}
+heatSetpointRange = {'min': 30, 'max': 100}
 
 thermostats = {
     'thermo1': {
@@ -32,34 +73,9 @@ def get(id):
 def update(id, updates):
     if id in thermostats:
         thermostats[id] = _.merge(thermostats[id], updates)
-        return None
+        return genericSuccess(get(id))
     else:
-        return None
-
-#######################
-### Response helpers ##
-#######################
-
-def genericFailure(message='Failure', statusCode=400):
-    return {
-        'message': message,
-        'statusCode': statusCode
-    }
-
-def genericSuccess(payload, message='Success'):
-    return {
-        'payload': payload,
-        'message': message
-    }
-
-def itemNotFound():
-    return genericFailure('The requested item is not available.', 404)
-
-def sendIfFound(item, successMessage='Success'):
-    if item is None:
-        return itemNotFound()
-    else:
-        return genericSuccess(item, successMessage)
+        return genericFailure('Cannot update unknown resource.')
 
 ##################
 ## Model layer ###
@@ -74,6 +90,9 @@ def getName(id):
         return itemNotFound()
     name = thermo.get('name', None)
     return sendIfFound(name)
+
+def setName(id, newName):
+    return update(id, {'name': newName})
 
 ##############
 ## Routing ###
@@ -98,8 +117,8 @@ class name:
         return getName(id)
 
     def PUT(self, id):
-        name = web.data()
-        return 'you put'
+        newName = web.data()
+        return setName(id, newName)
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
