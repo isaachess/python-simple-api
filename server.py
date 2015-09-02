@@ -12,6 +12,12 @@ def value_in_enum(value, allowed_values):
 def value_in_range(value, allowed_range):
     return value >= allowed_range['min'] and value <= allowed_range['max']
 
+def convertToInt(value):
+    try:
+        return int(float(value))
+    except ValueError:
+        return None
+
 #######################
 ### Response helpers ##
 #######################
@@ -133,7 +139,7 @@ def get_cool_setpoint(id):
     return get_property(id, 'cool_setpoint')
 
 def set_cool_setpoint(id, new_setpoint):
-    num_setpoint = int(float(new_setpoint))
+    num_setpoint = convertToInt(new_setpoint)
     return set_range_value(id, 'cool_setpoint', num_setpoint, cool_setpoint_range)
 
 ## heat setpoint
@@ -142,7 +148,7 @@ def get_heat_setpoint(id):
     return get_property(id, 'heat_setpoint')
 
 def set_heat_setpoint(id, new_setpoint):
-    num_setpoint = int(float(new_setpoint))
+    num_setpoint = convertToInt(new_setpoint)
     return set_range_value(id, 'heat_setpoint', num_setpoint, heat_setpoint_range)
 
 ## fan mode
