@@ -145,6 +145,14 @@ def set_heat_setpoint(id, new_setpoint):
     num_setpoint = int(float(new_setpoint))
     return set_range_value(id, 'heat_setpoint', num_setpoint, heat_setpoint_range)
 
+## fan mode
+
+def get_fan_mode(id):
+    return get_property(id, 'fan_mode')
+
+def set_fan_mode(id, new_mode):
+    return set_enum_value(id, 'fan_mode', new_mode, fan_modes)
+
 ##############
 ## Routing ###
 ##############
@@ -198,6 +206,14 @@ class heat_setpoint:
     def PUT(self, id):
         new_setpoint = web.data()
         return set_heat_setpoint(id, new_setpoint)
+
+class fan_mode:
+    def GET(self, id):
+        return get_fan_mode(id)
+
+    def PUT(self, id):
+        new_mode = web.data()
+        return set_fan_mode(id, new_mode)
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
