@@ -66,7 +66,7 @@ urls = (
 
 class thermostat:
     def GET(self, id):
-        return get_thermo(id)
+        return model.get_thermo(id)
 
 class name:
     def GET(self, id):

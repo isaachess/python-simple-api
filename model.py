@@ -23,7 +23,7 @@ thermostats = {
         'operating_mode': 'heat',
         'cool_setpoint': 70,
         'heat_setpoint': 77,
-        'fan_mode': 'auto'
+        'fan_mode': 'off'
     }
 }
 
