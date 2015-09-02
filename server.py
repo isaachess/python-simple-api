@@ -3,6 +3,10 @@ import lib
 import constants as cst
 import model
 
+#######################
+## Routes and logic ###
+#######################
+
 ## names
 
 def get_name(id):
@@ -49,10 +53,6 @@ def get_fan_mode(id):
 
 def set_fan_mode(id, new_mode):
     return model.set_enum_value(id, 'fan_mode', new_mode, cst.fan_modes)
-
-##############
-## Routing ###
-##############
 
 urls = (
     '/thermostat/(\w+)', 'thermostat',
@@ -111,6 +111,10 @@ class fan_mode:
     def PUT(self, id):
         new_mode = web.data()
         return set_fan_mode(id, new_mode)
+
+##################
+## Run the app ###
+##################
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
