@@ -54,7 +54,7 @@ thermostats = {
         'current_temp': 78,
         'operating_mode': 'cool',
         'cool_setpoint': 75,
-        'head_setpoint': 78,
+        'heat_setpoint': 78,
         'fan_mode': 'auto'
     },
     'thermo2': {
@@ -63,7 +63,7 @@ thermostats = {
         'current_temp': 75,
         'operating_mode': 'heat',
         'cool_setpoint': 70,
-        'head_setpoint': 77,
+        'heat_setpoint': 77,
         'fan_mode': 'auto'
     }
 }
@@ -76,11 +76,13 @@ def update(id, updates):
         thermostats[id] = _.merge(thermostats[id], updates)
         return generic_success(get(id))
     else:
-        return generic_failure('Cannot update unknown resource.')
+        return generic_failure('Cannot update: item not found.')
 
 ##################
 ## Model layer ###
 ##################
+
+## Low-level model helpers
 
 def get_thermo(id):
     return send_if_found(get(id))
@@ -92,14 +94,56 @@ def get_property(id, prop):
     value = thermo.get(prop, None)
     return send_if_found(value)
 
+def set_enum_value(id, prop, value, allowed_values):
+    if value_in_enum(value, allowed_values):
+        return update(id, {prop: value})
+    else:
+        return generic_failure('Cannot update: invalid value.', 400)
+
+def set_range_value(id, prop, value, allowed_values):
+    if value_in_range(value, allowed_values):
+        return update(id, {prop: value})
+    else:
+        return generic_failure('Cannot update: invalid value.', 400)
+
+## names
+
 def get_name(id):
     return get_property(id, 'name')
 
 def set_name(id, new_name):
     return update(id, {'name': new_name})
 
+## temp
+
 def get_temp(id):
     return get_property(id, 'current_temp')
+
+## operating mode
+
+def get_operating_mode(id):
+    return get_property(id, 'operating_mode')
+
+def set_operating_mode(id, new_mode):
+    return set_enum_value(id, 'operating_mode', new_mode, operating_modes)
+
+## cool setpoint
+
+def get_cool_setpoint(id):
+    return get_property(id, 'cool_setpoint')
+
+def set_cool_setpoint(id, new_setpoint):
+    num_setpoint = int(float(new_setpoint))
+    return set_range_value(id, 'cool_setpoint', num_setpoint, cool_setpoint_range)
+
+## heat setpoint
+
+def get_heat_setpoint(id):
+    return get_property(id, 'heat_setpoint')
+
+def set_heat_setpoint(id, new_setpoint):
+    num_setpoint = int(float(new_setpoint))
+    return set_range_value(id, 'heat_setpoint', num_setpoint, heat_setpoint_range)
 
 ##############
 ## Routing ###
@@ -133,11 +177,27 @@ class temp:
 
 class operating_mode:
     def GET(self, id):
-        return getOperatingMode(id)
+        return get_operating_mode(id)
 
     def PUT(self, id):
-        new_name = web.data()
-        return set_name(id, new_name)
+        new_mode = web.data()
+        return set_operating_mode(id, new_mode)
+
+class cool_setpoint:
+    def GET(self, id):
+        return get_cool_setpoint(id)
+
+    def PUT(self, id):
+        new_setpoint = web.data()
+        return set_cool_setpoint(id, new_setpoint)
+
+class heat_setpoint:
+    def GET(self, id):
+        return get_heat_setpoint(id)
+
+    def PUT(self, id):
+        new_setpoint = web.data()
+        return set_heat_setpoint(id, new_setpoint)
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
