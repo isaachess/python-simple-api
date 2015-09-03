@@ -3,6 +3,7 @@ A simple python api using web.py
 
 # Dependencies
 
+- **web.py**: `sudo pip install web.py`
 - **Pydash**: `sudo pip install pydash`
 
 # API documentation
