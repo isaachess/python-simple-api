@@ -1,7 +1,5 @@
-import pydash as _
-
 def value_in_enum(value, allowed_values):
-    return _.contains(allowed_values, value)
+    return value in allowed_values
 
 def value_in_range(value, allowed_range):
     return value >= allowed_range['min'] and value <= allowed_range['max']

@@ -1,10 +1,3 @@
-import pydash as _
-import lib
-
-###########
-## CRUD ###
-###########
-
 thermostats = {
     'thermo1': {
         'id': 'thermo1',
@@ -31,7 +24,8 @@ def get(id):
 
 def update(id, updates):
     if id in thermostats:
-        thermostats[id] = _.merge(thermostats[id], updates)
+        for key in updates:
+            thermostats[id][key] = updates[key]
         return get(id)
     else:
         return None
