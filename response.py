@@ -1,14 +1,16 @@
 def generic_failure(message='Failure', status_code=404):
     return {
         'message': message,
-        'status_code': status_code
+        'status_code': status_code,
+        'success': False
     }
 
 def generic_success(payload, message='Success', status_code=200):
     return {
         'payload': payload,
         'message': message,
-        'status_code': status_code
+        'status_code': status_code,
+        'success': True
     }
 
 def item_not_found():

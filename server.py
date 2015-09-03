@@ -2,57 +2,23 @@ import web
 import lib
 import constants as cst
 import model
+import response
 
 #######################
 ## Routes and logic ###
 #######################
 
-## names
+def set_enum_value(id, prop, value, allowed_values):
+    if lib.value_in_enum(value, allowed_values):
+        return response.send_if_found(model.update(id, {prop: value}))
+    else:
+        return response.generic_failure('Cannot update: invalid value.', 400)
 
-def get_name(id):
-    return model.get_property(id, 'name')
-
-def set_name(id, new_name):
-    return model.update(id, {'name': new_name})
-
-## temp
-
-def get_temp(id):
-    return model.get_property(id, 'current_temp')
-
-## operating mode
-
-def get_operating_mode(id):
-    return model.get_property(id, 'operating_mode')
-
-def set_operating_mode(id, new_mode):
-    return model.set_enum_value(id, 'operating_mode', new_mode, cst.operating_modes)
-
-## cool setpoint
-
-def get_cool_setpoint(id):
-    return model.get_property(id, 'cool_setpoint')
-
-def set_cool_setpoint(id, new_setpoint):
-    num_setpoint = lib.convertToInt(new_setpoint)
-    return model.set_range_value(id, 'cool_setpoint', num_setpoint, cst.cool_setpoint_range)
-
-## heat setpoint
-
-def get_heat_setpoint(id):
-    return model.get_property(id, 'heat_setpoint')
-
-def set_heat_setpoint(id, new_setpoint):
-    num_setpoint = lib.convertToInt(new_setpoint)
-    return model.set_range_value(id, 'heat_setpoint', num_setpoint, cst.heat_setpoint_range)
-
-## fan mode
-
-def get_fan_mode(id):
-    return model.get_property(id, 'fan_mode')
-
-def set_fan_mode(id, new_mode):
-    return model.set_enum_value(id, 'fan_mode', new_mode, cst.fan_modes)
+def set_range_value(id, prop, value, allowed_values):
+    if lib.value_in_range(value, allowed_values):
+        return response.send_if_found(model.update(id, {prop: value}))
+    else:
+        return response.generic_failure('Cannot update: invalid value.', 400)
 
 urls = (
     '/thermostat/(\w+)', 'thermostat',
@@ -66,51 +32,51 @@ urls = (
 
 class thermostat:
     def GET(self, id):
-        return model.get_thermo(id)
+        return response.send_if_found(model.get(id))
 
 class name:
     def GET(self, id):
-        return get_name(id)
+        return response.send_if_found(model.get_property(id, 'name'))
 
     def PUT(self, id):
         new_name = web.data()
-        return set_name(id, new_name)
+        return response.send_if_found(model.update(id, {'name': new_name}))
 
 class temp:
     def GET(self, id):
-        return get_temp(id)
+        return response.send_if_found(model.get_property(id, 'current_temp'))
 
 class operating_mode:
     def GET(self, id):
-        return get_operating_mode(id)
+        return response.send_if_found(model.get_property(id, 'operating_mode'))
 
     def PUT(self, id):
         new_mode = web.data()
-        return set_operating_mode(id, new_mode)
+        return set_enum_value(id, 'operating_mode', new_mode, cst.operating_modes)
 
 class cool_setpoint:
     def GET(self, id):
-        return get_cool_setpoint(id)
+        return response.send_if_found(model.get_property(id, 'cool_setpoint'))
 
     def PUT(self, id):
-        new_setpoint = web.data()
-        return set_cool_setpoint(id, new_setpoint)
+        num_setpoint = lib.convertToInt(web.data())
+        return set_range_value(id, 'cool_setpoint', num_setpoint, cst.cool_setpoint_range)
 
 class heat_setpoint:
     def GET(self, id):
-        return get_heat_setpoint(id)
+        return response.send_if_found(model.get_property(id, 'heat_setpoint'))
 
     def PUT(self, id):
-        new_setpoint = web.data()
-        return set_heat_setpoint(id, new_setpoint)
+        num_setpoint = lib.convertToInt(web.data())
+        return set_range_value(id, 'heat_setpoint', num_setpoint, cst.heat_setpoint_range)
 
 class fan_mode:
     def GET(self, id):
-        return get_fan_mode(id)
+        return response.send_if_found(model.get_property(id, 'fan_mode'))
 
     def PUT(self, id):
         new_mode = web.data()
-        return set_fan_mode(id, new_mode)
+        return set_enum_value(id, 'fan_mode', new_mode, cst.fan_modes)
 
 ##################
 ## Run the app ###
